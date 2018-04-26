@@ -13,3 +13,20 @@ add_library(
     src/main/cpp/FileOperation.cpp
 
 )
+
+
+find_library(
+    #库的名字
+    log-lib
+
+    #库的真实名字
+    log
+)
+
+#关联库
+target_link_libraries(
+
+    FileOperation
+
+    ${log-lib}
+)
