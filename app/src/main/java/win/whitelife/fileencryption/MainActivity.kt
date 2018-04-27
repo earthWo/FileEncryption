@@ -3,8 +3,13 @@ package win.whitelife.fileencryption
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
+import win.whitelife.fileencryptionlibrary.FileEncryption
 
 class MainActivity : AppCompatActivity() {
+
+
+    var fileEncryption :FileEncryption?=null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,8 +19,11 @@ class MainActivity : AppCompatActivity() {
         val picPath= PictureUtil.init(this)
         val picEncodePath=PictureUtil.getImagePath("/加密图片.jpg")
         val picDncodePath=PictureUtil.getImagePath("/解密图片.jpg")
+
+        fileEncryption= FileEncryption()
+
         btn_encode.setOnClickListener({
-            val succrss=fileEncryption(picPath,picEncodePath)
+            val succrss= fileEncryption!!.fileEncryption(picPath,picEncodePath)
             if(succrss==1){
                 tv.text="加密成功"
             }else{
@@ -24,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         btn_decode.setOnClickListener({
-            val succrss=fileDecrypt(picEncodePath,picDncodePath)
+            val succrss= fileEncryption!!.fileDecrypt(picEncodePath,picDncodePath)
             if(succrss==1){
                 tv.text="解密成功"
             }else{
@@ -33,10 +41,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    external fun fileEncryption(sourcePath :String, filePath :String):Int
 
-
-    external fun fileDecrypt(sourcePath: String,filePath: String):Int
 
     //初始化jni库
     companion object {
