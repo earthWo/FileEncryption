@@ -22,6 +22,22 @@
         android:text="解密"/>
 
 
+    <Button
+        android:id="@+id/btn_division"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp"
+        android:text="分解文件"/>
+
+    <Button
+        android:id="@+id/btn_merge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="150dp"
+        android:text="文件合并"/>
+
     <TextView
         android:id="@+id/tv"
         android:layout_width="wrap_content"

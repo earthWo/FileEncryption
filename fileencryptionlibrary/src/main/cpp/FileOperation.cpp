@@ -1,11 +1,12 @@
 /**
+ *
  *  wuzefeng
  *  2018/4/25
  */
 
 //
 #include <jni.h>
-#include <string>
+#include <string.h>
 #include <stdio.h>
 #include <android/log.h>
 
@@ -105,27 +106,104 @@ decodeFile(JNIEnv *env,jobject ,jstring sourceFile,jstring file){
 JNIEXPORT jint JNICALL
 division(JNIEnv *env,jobject,jstring filePath,jstring path,jint count){
 
+
+    //获取到地址
     const char *FILE_PATH=env->GetStringUTFChars(filePath, false);
     const char *FILE_NAME=env->GetStringUTFChars(path, false);
 
-    FILE *FILE=fopen(FILE_PATH,"rb");
-    if(FILE==NULL){
+
+    //打开原文件
+    FILE *SOURCE_FILE=fopen(FILE_PATH,"rb");
+
+    if(SOURCE_FILE==NULL){
         LOGV("没有文件");
         return EOF;
     }
 
-    for(int i=1;i<=count;i++){
+
+    //分解文件的列表
+    FILE *file_array[count];
+
+    //创建分解文件
+    for(int i=0;i<count;i++){
+        char buf[1024];
+        strcpy(buf,FILE_NAME);
+        sprintf(buf, "%s%d",buf,i);
+        const char *mp=(const char*)buf;
+        FILE *D_FILE=fopen(mp,"wb+");
+        file_array[i]=D_FILE;
     }
 
+    //将数据依次写到各个文件
     int b;
-    while ((b=fgetc(FILE))!=EOF){
+    int i=0;
+    while ((b=fgetc(SOURCE_FILE))!=EOF){
+        fputc(b,file_array[i]);
+        i++;
+        if(i>=count){
+            i=0;
+        }
+    }
+
+    //关闭各个文件
+    for(int a=0;a<count;a++){
+        fclose(file_array[a]);
+    }
+
+    //释放内存
+    env->ReleaseStringUTFChars(filePath,FILE_PATH);
+    env->ReleaseStringUTFChars(path,FILE_NAME);
+
+    return 1;
+}
 
 
+JNIEXPORT jint JNICALL
+merge(JNIEnv *env,jobject,jstring sourcePath,jobjectArray paths){
 
+    const char *SOURCE_PATH=env->GetStringUTFChars(sourcePath, false);
+
+    int fileCount=env->GetArrayLength(paths);
+
+
+    FILE *source_file=fopen(SOURCE_PATH,"wb+");
+
+    FILE *files[fileCount];
+
+
+    for(int i=0;i<fileCount;i++){
+        jstring jb= static_cast<jstring>(env->GetObjectArrayElement(paths, i));
+        const char *file =env->GetStringUTFChars(jb, false);
+
+        FILE *f=fopen(file,"rb");
+
+        if(f==NULL){
+            LOGV("%s没有找到",file);
+            return 0;
+        }
+        files[i]=f;
+    }
+
+    int i=0;
+    int byte;
+
+    int ct=0;
+
+    while ((byte=fgetc(files[i]))!=EOF){
+        fputc(byte,source_file);
+        i++;
+        if(i>=fileCount){
+            i=0;
+            ct++;
+        }
     }
 
 
+    for(int a=0;a<fileCount;a++){
+        fclose(files[a]);
+    }
 
+    env->ReleaseStringUTFChars(sourcePath,SOURCE_PATH);
     return 1;
 }
 
@@ -133,7 +211,8 @@ division(JNIEnv *env,jobject,jstring filePath,jstring path,jint count){
 static JNINativeMethod methods[]={
         {"fileEncryption","(Ljava/lang/String;Ljava/lang/String;)I",(void *)fileEncryption},
         {"fileDecrypt","(Ljava/lang/String;Ljava/lang/String;)I",(void *)decodeFile},
-        {"fileDivision","(Ljava/lang/String;Ljava/lang/String;I;)I",(void *)division}
+        {"fileDivision","(Ljava/lang/String;Ljava/lang/String;I)I",(void *)division},
+        {"fileMerge","(Ljava/lang/String;[Ljava/lang/String;)I",(void *)merge}
 };
 
 JNIEXPORT int JNICALL JNI_OnLoad(JavaVM *vm, void * reserved){

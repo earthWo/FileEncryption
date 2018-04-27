@@ -1,5 +1,6 @@
 package win.whitelife.fileencryptionlibrary
 
+
 /**
  * wuzefeng
  * 2018/4/27
@@ -23,5 +24,11 @@ class FileEncryption {
      * 文件分割
      */
     external fun fileDivision(sourcePath: String,name: String,count: Int):Int
+
+
+    /**
+     * 文件合并
+     */
+    external fun fileMerge(mergePath :String,filePaths: Array<String>):Int
 
 }
