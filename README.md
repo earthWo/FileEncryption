@@ -4,12 +4,27 @@
 加密文件：
 
 ```
-fileEncryption(picPath,picEncodePath)
+val fileEncryption= FileEncryption()
+fileEncryption.fileEncryption(picPath,picEncodePath)
 ```
 
 解密文件：
 
 ```
-fileDecrypt(picEncodePath,picDncodePath)
+val fileEncryption= FileEncryption()
+fileEncryption.fileDecrypt(picEncodePath,picDncodePath)
+```
+
+文件分割：
+
+```
+val fileEncryption= FileEncryption()
+fileEncryption.fileDivision(picPath,divisionPath,10)
+```
+
+文件合并：
+
+```
+fileEncryption.fileDivision(picPath,divisionPath,10)
 ```
 
