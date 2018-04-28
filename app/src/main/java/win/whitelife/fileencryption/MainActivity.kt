@@ -9,6 +9,14 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
+    fun encode(b: Int): Int {
+        return ((b + 2) * 3).inv()
+    }
+
+    fun decode(b: Int): Int {
+        return b.inv() / 3 - 2
+    }
+
 
     var fileEncryption :FileEncryption?=null
 

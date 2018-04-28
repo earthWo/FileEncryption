@@ -138,7 +138,7 @@ division(JNIEnv *env,jobject,jstring filePath,jstring path,jint count){
     int b;
     int i=0;
     while ((b=fgetc(SOURCE_FILE))!=EOF){
-        fputc(b,file_array[i]);
+        fputc(encode(b),file_array[i]);
         i++;
         if(i>=count){
             i=0;
@@ -158,6 +158,13 @@ division(JNIEnv *env,jobject,jstring filePath,jstring path,jint count){
 }
 
 
+/**
+ * 图片合并
+ * @param env
+ * @param sourcePath
+ * @param paths
+ * @return
+ */
 JNIEXPORT jint JNICALL
 merge(JNIEnv *env,jobject,jstring sourcePath,jobjectArray paths){
 
@@ -165,11 +172,9 @@ merge(JNIEnv *env,jobject,jstring sourcePath,jobjectArray paths){
 
     int fileCount=env->GetArrayLength(paths);
 
-
     FILE *source_file=fopen(SOURCE_PATH,"wb+");
 
     FILE *files[fileCount];
-
 
     for(int i=0;i<fileCount;i++){
         jstring jb= static_cast<jstring>(env->GetObjectArrayElement(paths, i));
@@ -182,27 +187,25 @@ merge(JNIEnv *env,jobject,jstring sourcePath,jobjectArray paths){
             return 0;
         }
         files[i]=f;
+
+        env->ReleaseStringUTFChars(jb,file);
     }
 
     int i=0;
     int byte;
 
-    int ct=0;
-
     while ((byte=fgetc(files[i]))!=EOF){
-        fputc(byte,source_file);
+        fputc(decode(byte),source_file);
         i++;
         if(i>=fileCount){
             i=0;
-            ct++;
         }
     }
-
 
     for(int a=0;a<fileCount;a++){
         fclose(files[a]);
     }
-
+    fclose(source_file);
     env->ReleaseStringUTFChars(sourcePath,SOURCE_PATH);
     return 1;
 }
